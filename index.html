@@ -1,0 +1,51 @@
+from pathlib import Path
+
+p = Path("/mnt/data/ENGLISH_10_UNIT_1_FAMILY_LIFE_VOCAB_GRAMMAR.html")
+text = p.read_text(encoding="utf-8")
+
+# 1) Remove the first line "II – VOCABULARY AND GRAMMAR"
+text = text.replace(' <div class="kicker">II – VOCABULARY AND GRAMMAR</div>\n', '')
+
+# 2) Center the main heading area
+text = text.replace(
+    'h1{font-size:clamp(23px,4vw,34px);margin:4px 0 2px;color:var(--blue2)}',
+    'h1{font-size:clamp(23px,4vw,34px);margin:4px 0 2px;color:var(--blue2);text-align:center}'
+)
+text = text.replace(
+    '.sub{font-size:14px;color:#60778e}',
+    '.sub{font-size:14px;color:#60778e;text-align:center}'
+)
+text = text.replace(
+    '.teacher{font-size:13px;margin-top:7px;color:#49657d}',
+    '.teacher{font-size:13px;margin-top:7px;color:#49657d;text-align:center}'
+)
+
+# 3) Make answer options same font size as question text
+old = """.option{
+ width:100%;text-align:left;border:1px solid #dbe8f4;background:#fbfdff;border-radius:11px;
+ padding:10px 11px;cursor:pointer;color:#2c3c4e;min-height:46px;
+}"""
+new = """.option{
+ width:100%;text-align:left;border:1px solid #dbe8f4;background:#fbfdff;border-radius:11px;
+ padding:11px 12px;cursor:pointer;color:#2c3c4e;min-height:48px;
+ font-size:19px;line-height:1.45;font-family:Georgia,"Times New Roman",serif;
+}"""
+text = text.replace(old, new)
+
+# 4) Match mobile option font size to mobile question font size
+text = text.replace(
+    '.options{grid-template-columns:1fr}.qtext{font-size:17px}',
+    '.options{grid-template-columns:1fr}.qtext{font-size:17px}.option{font-size:17px}'
+)
+
+p.write_text(text, encoding="utf-8")
+
+# Verify changes
+check = p.read_text(encoding="utf-8")
+print("Đã cập nhật:", p)
+print({
+    "removed_first_heading": "II – VOCABULARY AND GRAMMAR" not in check,
+    "title_centered": "text-align:center" in check,
+    "option_font_19": "font-size:19px;line-height:1.45" in check,
+    "mobile_option_17": ".option{font-size:17px}" in check
+})
